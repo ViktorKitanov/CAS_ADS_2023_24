@@ -16,6 +16,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, mean_squared_error, confusion_matrix
 
 pd.set_option('display.max_columns', None)
 pd.set_option('expand_frame_repr', True)
@@ -100,9 +101,24 @@ for depth in (1, 5, 10, 15):
     plt.tight_layout()
     plt.show()
 
-    # Flatten Z and ensure it has the same length as y_test
-    flattened_Z = Z.ravel()[:len(y_test)]
+    # Use the DecisionTreeClassifier to predict on the test data
+    predictions = dtc.predict(x_test)
 
-    # Calculate mean squared error
-    dt_mse = mean_squared_error(y_test, flattened_Z)
+    # Flatten predictions and ensure it has the same length as y_test
+    flattened_predictions = predictions.ravel()[:len(y_test)]
+
+    # Evaluate the model using mean squared error, accuracy, precision, recall, F1-score, and Confusion Matrix and print results
+    dt_mse = mean_squared_error(y_test, flattened_predictions)
+    accuracy = accuracy_score(y_test, flattened_predictions)
+    precision = precision_score(y_test, flattened_predictions, average='weighted')
+    recall = recall_score(y_test, flattened_predictions, average='weighted')
+    f1 = f1_score(y_test, flattened_predictions, average='weighted')
+    cm = confusion_matrix(y_test, flattened_predictions)
+
     print(f'Decision Tree Mean Squared Error: {dt_mse}')
+    print(f'Accuracy: {accuracy}')
+    print(f'Precision: {precision}')
+    print(f'Recall: {recall}')
+    print(f'F1-Score: {f1}')
+    print('Confusion Matrix:')
+    print(cm)

@@ -7,8 +7,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import precision_score, recall_score, f1_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, mean_squared_error, confusion_matrix
 
 pd.set_option('display.max_columns', None)
 pd.set_option('expand_frame_repr', True)
@@ -81,22 +80,18 @@ plt.show()
 # Trained logistic regression model, now make predictions
 predictions = clf.predict(x_test)
 
-# Evaluate the model using accuracy
+# Evaluate the model using MSE, accuracy, precision, recall, F1-score, and Confusion Matrix and print results
+mse = mean_squared_error(y_test, predictions)
 accuracy = accuracy_score(y_test, predictions)
+precision = precision_score(y_test, predictions, average='weighted')
+recall = recall_score(y_test, predictions, average='weighted')
+f1 = f1_score(y_test, predictions, average='weighted')
+cm = confusion_matrix(y_test, predictions)
+
+print(f'Mean Squared Error: {mse}')
 print(f'Accuracy: {accuracy}')
-
-# Evaluate the model using precision, recall, and F1-score
-precision = precision_score(y_test, predictions, average='micro')
-recall = recall_score(y_test, predictions, average='micro')
-f1 = f1_score(y_test, predictions, average='micro')
-
 print(f'Precision: {precision}')
 print(f'Recall: {recall}')
 print(f'F1-Score: {f1}')
-
-from sklearn.metrics import confusion_matrix
-
-# Confusion Matrix
-cm = confusion_matrix(y_test, predictions)
 print('Confusion Matrix:')
 print(cm)
