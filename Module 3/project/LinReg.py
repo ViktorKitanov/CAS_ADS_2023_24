@@ -15,7 +15,6 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.tree import DecisionTreeClassifier, plot_tree
 
 pd.set_option('display.max_columns', None)
 pd.set_option('expand_frame_repr', True)
@@ -49,50 +48,32 @@ filtered_df = dfPubliBikeAvailability[(dfPubliBikeAvailability['timestamp'] >= s
                                       (dfPubliBikeAvailability['timestamp'] <= end_date) &
                                       (dfPubliBikeAvailability['id'] == 230)]
 
+print(filtered_df)
+
 # With a dataframe with columns 'x', and 'y'
-#x = filtered_df[["continuous_time"]]
-x = filtered_df[["dayofweek", "hourofday"]]
+x = filtered_df[["continuous_time"]]
 y = filtered_df['bike_availability']
 
 # Split the data
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
 
-# make 3-class dataset for classification
+#LINEAR REGRESSION
+reg = linear_model.LinearRegression()
+reg.fit(x_train, y_train)
 
-transformation = [[0.4, 0.2], [-0.4, 1.2]]
-x_train_transformed = np.dot(x_train, transformation)
+w, w0 = reg.coef_, reg.intercept_
+print(w, w0)
 
-dtcs = []
-for depth in (1, 2, 3, 4, 5):
-    # do fit
-    dtc = DecisionTreeClassifier(max_depth=depth, criterion='entropy')  # 'entropy'
-    dtcs.append(dtc)
-    dtc.fit(x_train_transformed, y_train)
+plt.scatter(x_test, y_test, marker='*', label='data points')
+x_f = np.linspace(x_test.min(), x_test.max(), 10)
+y_f = w0 + w[0] * x_f
+plt.plot(x_f, y_f, label='fit', c='r')
+plt.legend()
+plt.show()
 
-    # print the training scores
-    print("Training score : %.3f (depth=%d)" % (dtc.score(x_train, y_train), depth))
+# Make predictions
+predictions = reg.predict(x_test)
 
-    fig, ax = plt.subplots(1, 2,  figsize=(8,4), dpi=150)
-
-    # Plot decision boundaries
-    h = 0.02
-    x_min, x_max = x_train_transformed[:, 0].min() - 1, x_train_transformed[:, 0].max() + 1
-    y_min, y_max = x_train_transformed[:, 1].min() - 1, x_train_transformed[:, 1].max() + 1
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
-    Z = dtc.predict(np.c_[xx.ravel(), yy.ravel()])
-    Z = Z.reshape(xx.shape)
-    ax[0].contourf(xx, yy, Z, alpha=0.5)
-
-    # Plot training points
-    scatter = ax[0].scatter(x_train_transformed[:, 0], x_train_transformed[:, 1], c=y_train, edgecolor='black', s=20, linewidth=0.2)
-
-    # Create legend
-    legend_labels = {0: 'Group 0', 1: 'Group 1', 2: 'Group 2'}
-    ax[0].legend(handles=scatter.legend_elements()[0], title='Classes', labels=[legend_labels[0], legend_labels[1], legend_labels[2]])
-    ax[0].set_title("Decision surface of DTC (%d)" % depth)
-
-    # Plot the decision tree
-    plot_tree(dtc, ax=ax[1], filled=True, feature_names=["dayofweek", "hourofday"])
-
-    plt.tight_layout()
-    plt.show()
+# Evaluate the model
+mse = mean_squared_error(y_test, predictions)
+print(f'Mean Squared Error: {mse}')
