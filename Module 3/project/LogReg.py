@@ -1,8 +1,5 @@
 import numpy as np
-import seaborn as sns
-import scipy.stats
 import matplotlib.pyplot as plt
-import sklearn
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -39,15 +36,16 @@ start_date = '2023-05-15'
 end_date = '2023-09-15'
 filtered_df = dfPubliBikeAvailability[(dfPubliBikeAvailability['timestamp'] >= start_date) &
                                       (dfPubliBikeAvailability['timestamp'] <= end_date) &
-                                      (dfPubliBikeAvailability['id'] == 230)]
-
+                                      (dfPubliBikeAvailability['id'] == 315)]
 
 # With a dataframe with columns 'x', and 'y'
 x = filtered_df[["continuous_time"]]
-y = filtered_df['bike_availability']
+y = filtered_df['e-bike_availability']
 
 # Split the data
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+#LOGISTIC REGRESSION
 
 # Scale the features
 scaler = StandardScaler()
@@ -62,23 +60,23 @@ coef = clf.coef_
 intercept = clf.intercept_
 print(coef, intercept)
 
-plt.scatter(x_test, y_test, marker='*', label='data points')
+plt.scatter(x_test_scaled, y_test, marker='*', label='data points')
 
 # Generate a range of x values
-x_values = np.linspace(x_test.min(), x_test.max(), 300).reshape(-1, 1)
+x_values = np.linspace(x_test_scaled.min(), x_test_scaled.max(), 300).reshape(-1, 1)
 
 # Use the fitted model to get predicted probabilities for the range of x_values
 probabilities = clf.predict_proba(x_values)[:, 1]
 
 # Plot the logistic function
 plt.plot(x_values, probabilities, label='Logistic Function', c='r')
-plt.xlabel('x values')
-plt.ylabel('Probability (y values)')
+plt.xlabel('Time')
+plt.ylabel('Availability Group')
 plt.legend()
 plt.show()
 
 # Trained logistic regression model, now make predictions
-predictions = clf.predict(x_test)
+predictions = clf.predict(x_test_scaled)
 
 # Evaluate the model using MSE, accuracy, precision, recall, F1-score, and Confusion Matrix and print results
 mse = mean_squared_error(y_test, predictions)

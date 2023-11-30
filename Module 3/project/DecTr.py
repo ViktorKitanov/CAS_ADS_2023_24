@@ -1,20 +1,7 @@
 import numpy as np
-import seaborn as sns
-import scipy.stats
 import matplotlib.pyplot as plt
-import sklearn
-#import tensorflow as tf
 import pandas as pd
-import umap
-import plotly.express as px
-#from IPython.display import display
-from sklearn.preprocessing import MinMaxScaler
-from sklearn import linear_model
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.tree import DecisionTreeRegressor
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, mean_squared_error, confusion_matrix
 
@@ -48,21 +35,17 @@ start_date = '2023-05-15'
 end_date = '2023-09-15'
 filtered_df = dfPubliBikeAvailability[(dfPubliBikeAvailability['timestamp'] >= start_date) &
                                       (dfPubliBikeAvailability['timestamp'] <= end_date) &
-                                      (dfPubliBikeAvailability['id'] == 230)]
+                                      (dfPubliBikeAvailability['id'] == 315)]
 
 # With a dataframe with columns 'x', and 'y'
-#x = filtered_df[["continuous_time"]]
 x = filtered_df[["continuous_time"]]
-y = filtered_df['bike_availability']
+y = filtered_df['e-bike_availability']
 
 # Split the data
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
 
-# make 3-class dataset for classification
-
-
+#DECISION TREE
 x_train_transformed = x_train.values
-
 dtcs = []
 for depth in (1, 5, 10, 15):
     # do fit
@@ -97,7 +80,6 @@ for depth in (1, 5, 10, 15):
 
     # Plot the decision tree
     plot_tree(dtc, ax=ax[1], filled=True, feature_names=["continuous_time"])
-
     plt.tight_layout()
     plt.show()
 

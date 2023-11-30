@@ -1,20 +1,9 @@
 import numpy as np
-import seaborn as sns
-import scipy.stats
 import matplotlib.pyplot as plt
-import sklearn
-#import tensorflow as tf
 import pandas as pd
-import umap
-import plotly.express as px
-#from IPython.display import display
-from sklearn.preprocessing import MinMaxScaler
 from sklearn import linear_model
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.tree import DecisionTreeRegressor
 
 pd.set_option('display.max_columns', None)
 pd.set_option('expand_frame_repr', True)
@@ -46,13 +35,11 @@ start_date = '2023-05-15'
 end_date = '2023-09-15'
 filtered_df = dfPubliBikeAvailability[(dfPubliBikeAvailability['timestamp'] >= start_date) &
                                       (dfPubliBikeAvailability['timestamp'] <= end_date) &
-                                      (dfPubliBikeAvailability['id'] == 230)]
-
-print(filtered_df)
+                                      (dfPubliBikeAvailability['id'] == 315)]
 
 # With a dataframe with columns 'x', and 'y'
 x = filtered_df[["continuous_time"]]
-y = filtered_df['bike_availability']
+y = filtered_df['e-bike_availability']
 
 # Split the data
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
@@ -68,6 +55,8 @@ plt.scatter(x_test, y_test, marker='*', label='data points')
 x_f = np.linspace(x_test.min(), x_test.max(), 10)
 y_f = w0 + w[0] * x_f
 plt.plot(x_f, y_f, label='fit', c='r')
+plt.xlabel('Time')
+plt.ylabel('Availability Group')
 plt.legend()
 plt.show()
 
