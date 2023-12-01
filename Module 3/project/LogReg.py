@@ -6,6 +6,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, mean_squared_error, confusion_matrix
 
+
 pd.set_option('display.max_columns', None)
 pd.set_option('expand_frame_repr', True)
 
@@ -59,6 +60,11 @@ clf.fit(x_train_scaled, y_train)
 coef = clf.coef_
 intercept = clf.intercept_
 print(coef, intercept)
+
+# Calculate the training accuracy
+training_accuracy = clf.score(x_train_scaled, y_train)
+
+print("Training Accuracy:", training_accuracy)
 
 plt.scatter(x_test_scaled, y_test, marker='*', label='data points')
 
